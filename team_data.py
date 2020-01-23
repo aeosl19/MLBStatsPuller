@@ -5,8 +5,9 @@ import pandas as pd
 from pandas.io.json import json_normalize
 import re
 import utils
-from models import Teams ,session
+from models import Teams, session, Rosters
 import datetime as dt
+
 
 def get_teams():
     if queries.check_table_exists('teams'):
@@ -27,20 +28,22 @@ def get_teams():
 
 def update_roster():
     try:
-        team_ids = session.query(Teams.id).all()
-        team_ids = [x.id for x in team_ids]
-        df = pd.DataFrame()
-        for i in team_ids:
-            url = f'{constants.API_URL}/teams/{i}/roster'
-            result = fetch.get_data(url)['roster']
-            tmp = json_normalize(result)
-            tmp['team_id'] = i
-            df = df.append(tmp, sort=False)
-        df.rename(columns=lambda x: re.sub(r'\.', '_', x), inplace=True)
-        df.columns = [x.lower() for x in df.columns]
-        df['updated'] = constants.today
-        queries.insert_data(df, 'rosters')
-        print(f'rosters updated: {constants.today}')
-        return True
-    except (Exception) as ex:
-        print(ex)
+        last_update = queries.check_last_update(Rosters)
+        next_update = last_update + dt.timedelta(6)
+        if (last_update is None) or (next_update < constants.today):
+            team_ids = session.query(Teams.id).all()
+            team_ids = [x.id for x in team_ids]
+            df = pd.DataFrame()
+            for i in team_ids:
+                url = f'{constants.API_URL}/teams/{i}/roster'
+                result = fetch.get_data(url)['roster']
+                tmp = json_normalize(result)
+                tmp['team_id'] = i
+                df = df.append(tmp, sort=False)
+            df.rename(columns=lambda x: re.sub(r'\.', '_', x), inplace=True)
+            df.columns = [x.lower() for x in df.columns]
+            df['updated'] = constants.today
+            queries.insert_data(df, 'rosters')
+            print(f'rosters updated: {constants.today}')
+    except Exception as ex:
+        print('heiei', ex)

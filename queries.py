@@ -2,6 +2,8 @@ import psycopg2
 import sqlalchemy
 import pandas as pd
 from constants import engine
+from models import Teams, Rosters, session
+from sqlalchemy import func
 
 
 def check_table_exists(table):
@@ -44,4 +46,17 @@ def insert_data(df, table, replace=False):
         print(f'Error {ex} when inserting table {table}')
 
 
+
+def check_last_update(table, is_roster=False):
+    print(session.query(func.max(Rosters.updated)).scalar())
+
+    # try:
+    #     c.execute(query)
+    #     last_update = c.fetchone()
+    #     last_update = dt.datetime.strptime(last_update, '%Y-%m-%d').date()
+    #     return last_update
+    # except Exception as ex:
+    #     print ('From function: check_last_update: {}'.format(ex))
+    #     return None
+    # conn.close()
 
