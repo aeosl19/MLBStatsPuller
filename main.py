@@ -3,7 +3,7 @@ from team_data import get_teams, update_roster
 
 
 def initialize():
-   # get_teams()
+   get_teams()
    update_roster()
     # print(df_teams.columns)
 

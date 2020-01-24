@@ -40,23 +40,15 @@ def insert_data(df, table, replace=False):
     try:
         if replace:
             df.to_sql(table, engine, if_exists='replace')
+            print(f'{table} created')
         else:
             df.to_sql(table, engine, if_exists='append')
+            print(f'{table} updated')
     except Exception as ex:
         print(f'Error {ex} when inserting table {table}')
 
 
 
 def check_last_update(table, is_roster=False):
-    print(session.query(func.max(Rosters.updated)).scalar())
-
-    # try:
-    #     c.execute(query)
-    #     last_update = c.fetchone()
-    #     last_update = dt.datetime.strptime(last_update, '%Y-%m-%d').date()
-    #     return last_update
-    # except Exception as ex:
-    #     print ('From function: check_last_update: {}'.format(ex))
-    #     return None
-    # conn.close()
+    return session.query(func.max(table.updated)).scalar()
 
