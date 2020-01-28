@@ -6,3 +6,4 @@ engine = create_engine('postgresql://andreaserga:Patrik78@localhost:5432/mlb_db'
 
 
 today = (dt.datetime.today() - dt.timedelta(hours=9)).date()
+yesterday = today - dt.timedelta(1)
