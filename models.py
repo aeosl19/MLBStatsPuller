@@ -1,5 +1,5 @@
 import sqlalchemy
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, Boolean
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, Boolean, Float, Date
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, backref
 from sqlalchemy import ForeignKey
@@ -54,6 +54,35 @@ class Player(Base):
     updated = Column(DateTime)
     team_id = Column(Integer, ForeignKey('team.id'))
     # team = relationship("teams", back_populates="players")
+
+class Game(Base):
+    __tablename__ = 'game'
+    id = Column(Integer, primary_key=True)
+    gamepk = Column(Integer)
+    link = Column(String)
+    gametype = Column(String)
+    season = Column(String)
+    gamedate = Column(Date)
+    calendareventid = Column(String)
+    seriesdescription = Column(String)
+    away_team_name = Column(String)
+    away_team_id = Column(Integer)
+    away_score = Column(Integer)
+    home_team_name = Column(String)
+    home_team_id = Column(Integer)
+    away_leaguerecord_pct = Column(Float)
+    home_leaguerecord_pct = Column(Float)
+    home_score = Column(Integer)
+    home_iswinner = Column(Boolean)
+    away_iswinner = Column(Boolean)
+    venue_id = Column(Integer)
+    venue_name = Column(String)
+    status_statuscode = Column(String)
+    status_codedgamestate = Column(String)
+    status_detailedstate = Column(String)
+    boxscore = Column(String)
+    home_pitcher_id = Column(String)
+    away_pitcher_id = Column(String)
 
 
 

@@ -2,6 +2,8 @@ from sqlalchemy import create_engine
 import datetime as dt
 
 API_URL = "http://statsapi.mlb.com/api/v1"
+BASE_URL = "https://statsapi.mlb.com"
+
 engine = create_engine('postgresql://andreaserga:Patrik78@localhost:5432/mlb_db')
 
 

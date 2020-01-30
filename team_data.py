@@ -26,15 +26,15 @@ def get_teams():
         print('Teams inserted')
 
 
-def update_roster():
-    last_update = queries.check_last_update(Player) if not 'None' else dt.date(2015,1,1)
-    print(f'Rosters last_updated: {last_update}')
+def update_player_table():
+    last_update = queries.check_last_update(Player, is_roster=True)
     next_update = last_update + dt.timedelta(6)
-    if next_update < constants.today:
+    if next_update.date() < constants.today:
+        print(f'updating, last update: {last_update}')
         team_ids = session.query(Team.id).all()
         session.commit()
         team_ids = [x.id for x in team_ids]
-        print(team_ids)
+        # print(team_ids)
         df = fetch.get_rosters(team_ids)
         df.reset_index(drop=True, inplace=True)
         df.jerseynumber.replace("", -1, inplace=True)
