@@ -22,13 +22,10 @@ def get_games():
             print('games up to date')
             return
 
-def get_stats():
-    gamepks = queries.get_data(Game.boxscore)
-    for url in gamepks:
-        print (url[0])
-
-
-
-
-
-
+def update_game_stats():
+    last_update = queries.check_last_update(Game) if not None else dt.date(2018, 1, 1)
+    print(last_update)
+    gamepks = queries.get_data()
+    print(gamepks)
+    # for url, gamedate in gamepks:
+    #     print (url[0])

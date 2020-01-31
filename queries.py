@@ -2,7 +2,7 @@ import psycopg2
 from sqlalchemy import create_engine
 import pandas as pd
 from constants import engine
-from models import Team, Player, session, Game
+from models import Team, Player, session, Game, Gamestat
 from sqlalchemy import func
 import datetime as dt
 from models import Base
@@ -49,9 +49,9 @@ def insert_data(df, table, replace_append='append'):
     try:
         session.bulk_insert_mappings(mapped_table, df.to_dict(orient='records'))
         session.commit()
-        print(f'{table} created')
+        print(f'Data insterted into: {table}')
     except Exception as ex:
-        print(f'Error {ex} when inserting table {table}')
+        print(f'Error {ex} when inserting into table: {table}')
 
 
 def check_last_update(table, is_roster=False):
@@ -67,6 +67,6 @@ def check_last_update(table, is_roster=False):
 def get_data(tableAndCol, all=True):
     if all:
         data = session.query(tableAndCol).filter(Game.gamedate == dt.date(2019,7,30)).all()
-        session.commit()
+        #session.commit()
         return data
 
