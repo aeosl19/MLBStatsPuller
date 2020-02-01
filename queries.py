@@ -59,8 +59,6 @@ def check_last_update(table, is_roster=False):
         last_update = session.query(func.max(table.updated)).scalar()
     else:
         last_update = session.query(func.max(table.gamedate)).scalar()
-    # print(f'fra check update: {last_update}')
-    print(f'{table} last update: {last_update}')
     session.commit()
     return last_update
 

@@ -28,8 +28,12 @@ def get_teams():
 
 def update_player_table():
     last_update = queries.check_last_update(Player, is_roster=True)
+
+    if last_update == None: last_update = dt.date(2018, 1, 1)
     next_update = last_update + dt.timedelta(6)
-    if next_update.date() < constants.today:
+    print(type(last_update))
+
+    if next_update < constants.today:
         print(f'updating, last update: {last_update}')
         team_ids = session.query(Team.id).all()
         session.commit()

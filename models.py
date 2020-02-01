@@ -1,5 +1,5 @@
 import sqlalchemy
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, Boolean, Float, Date
+from sqlalchemy import create_engine, Column, Integer, String, Boolean, Float, Date, Table
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, backref
 from sqlalchemy import ForeignKey
@@ -32,17 +32,17 @@ class Team(Base):
     venue_id = Column(Integer)
     venue_name = Column(String)
     venue_link = Column(String)
-    players = relationship('Player', backref="team")
+    # relationship("Child", back_populates="parent")
+    players = relationship('Player', back_populates="team")
 
     def __repr__(self):
         return "<Teams(name='%s', teamcode='%s', division_name='%s')>" % (self.name, self.teamcode, self.division_name)
 
 class Player(Base):
     __tablename__ = 'player'
-    id = Column(Integer, primary_key=True)
     jerseynumber = Column(Integer)
     parentteamid = Column(Integer)
-    person_id = Column(Integer, index=True, unique=True)
+    person_id = Column(Integer, primary_key=True)
     person_fullname = Column(String)
     person_link = Column(String)
     position_code = Column(Integer)
@@ -51,9 +51,14 @@ class Player(Base):
     position_abbreviation = Column(String)
     status_code = Column(String)
     status_description = Column(String)
-    updated = Column(DateTime)
+    updated = Column(Date)
     team_id = Column(Integer, ForeignKey('team.id'))
-    # team = relationship("teams", back_populates="players")
+    team = relationship("Team", back_populates="players")
+
+game_to_stats_association_table = Table('game_to_stats_association', Base.metadata,
+    Column('game_id', Integer, ForeignKey('game.id')),
+    Column('gamestat_id', Integer, ForeignKey('gamestat.id'))
+)
 
 class Game(Base):
     __tablename__ = 'game'
@@ -83,17 +88,19 @@ class Game(Base):
     boxscore = Column(String)
     home_pitcher_id = Column(String)
     away_pitcher_id = Column(String)
+    # game_players = Column(ForeignKey='player.person_id')
+    game_players_id = relationship("Gamestat",secondary=game_to_stats_association_table,back_populates="game_ids")
 
 
 class Gamestat(Base):
     __tablename__ = 'gamestat'
     id = Column(Integer, primary_key=True)
-    gamepk = Column(Integer) # foreingkey to Game.gamepk
+    gamepk = Column(Integer)
     gamedate = Column(Date)
     homegame = Column(Boolean)
     team_name = Column(String)
     team_id = Column(Integer)
-    player_id = Column(Integer) # foreignkey to Player.person_id
+    player_id = Column(Integer)
     player_fullname = Column(String)
     player_link = Column(String)
     position_code = Column(Float)
@@ -181,3 +188,4 @@ class Gamestat(Base):
     pitching_sacbunts = Column(Float)
     pitching_sacflies = Column(Float)
     pitching_flyouts = Column(Float)
+    game_ids = relationship("Game", secondary=game_to_stats_association_table, back_populates="game_players_id")

@@ -49,8 +49,8 @@ def update_played_games(season, fromDate, toDate, gameType='R'):
     result = get_data(url)
     games = []
 
-    for date in result['dates']:
-        for game in date['games']:
+    for gamedata in result['dates']:
+        for game in gamedata['games']:
             games.append(game)
     df = pd.DataFrame.from_dict(games)
 
