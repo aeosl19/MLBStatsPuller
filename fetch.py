@@ -77,7 +77,7 @@ def update_played_games(season, fromDate, toDate, gameType='R'):
     df.link = constants.BASE_URL + df.link
     df['boxscore'] = df.link.replace({'feed/live': 'boxscore', '1.1': '2'}, regex=True)
     df['link'] = df.link.replace({'1.1': '2'}, regex=True)
-    df['gamedate'] = (pd.to_datetime(df['gamedate'])).dt.date
+    df['gamedate'] = ((pd.to_datetime(df['gamedate'])) - dt.timedelta(hours=5)).dt.date
 
     pitcher_ids = pd.DataFrame.from_dict(get_starting_pitcher(df.boxscore, df.gamepk))
     df = df.merge(pitcher_ids, on='gamepk')

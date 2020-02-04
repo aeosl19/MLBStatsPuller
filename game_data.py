@@ -96,11 +96,11 @@ def update_game_stats():
     data = session.query(Game).filter(Game.gamedate > last_update).all()
     session.commit()
 
-    gameUrls = []
+    gmdata = []
     for i in data:
-        gameUrls.append({
+        gmdata.append({
             'boxscore': i.boxscore,
             'gamedate': i.gamedate
         })
 
-    return get_game_stats(gameUrls)
+    return get_game_stats(gmdata)

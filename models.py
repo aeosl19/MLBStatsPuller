@@ -1,10 +1,10 @@
-import sqlalchemy
 from sqlalchemy import create_engine, Column, Integer, String, Boolean, Float, Date, Table
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, backref
 from sqlalchemy import ForeignKey
+from constants import engine
 
-engine = create_engine('postgresql://andreaserga:Patrik78@localhost:5432/mlb_db')
+# engine = create_engine('postgresql://andreaserga:Patrik78@localhost:5432/mlb_db', echo=True)
 Session = sessionmaker(bind=engine)
 session = Session()
 
