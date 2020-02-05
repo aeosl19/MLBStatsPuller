@@ -10,17 +10,20 @@ from fetch import update_played_games, get_data
 
 def get_games():
     last_update = queries.check_last_update(Game)
+    print(last_update)
     if last_update == None: last_update = dt.date(2018, 1, 1)
     print(f'Games last_update: {last_update}')
     for i in range(last_update.year, yesterday.year + 1):
-        if (i < yesterday.year) and (last_update < dt.date(2019, 9, 29)):
-            print(i)
-            dfGames = update_played_games(i, f'{i}-{last_update.month}-{last_update.day}', f'{i}-10-15')
+        print(i)
+        if (i < yesterday.year):
+            dfGames = update_played_games(i, f'{i}-01-01', f'{i}-10-15')
             queries.insert_data(df=dfGames, table='game', replace_append='append')
+
         elif (i == yesterday.year) and (yesterday > dt.date(2020, 3, 26)):
-            print(i)
-            dfGames = update_played_games(i, f'{i}-{last_update.month}-{last_update.day}', yesterday)
+            fromDate = last_update + dt.timedelta(days=1)
+            dfGames = update_played_games(i, f'{i}-{fromDate.month}-{fromDate.day}', yesterday)
             queries.insert_data(df=dfGames, table='game', replace_append='append')
+
         else:
             print('games up to date')
             return
