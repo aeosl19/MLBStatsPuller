@@ -43,6 +43,7 @@ def update_player_table():
         df.reset_index(drop=True, inplace=True)
         df.jerseynumber.replace("", -1, inplace=True)
         df.position_code.replace('O', 9, inplace=True)
+        #print(df.shape)
         queries.insert_data(df, 'player')
     else:
         print(f'rosters up to date, next update: {next_update}')

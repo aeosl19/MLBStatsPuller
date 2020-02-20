@@ -9,13 +9,16 @@ from fetch import update_played_games, get_data
 
 
 def get_games():
+    startDate = dt.date(2018,1,1)
     last_update = queries.check_last_update(Game)
     print(last_update)
     if last_update == None: last_update = dt.date(2018, 1, 1)
     print(f'Games last_update: {last_update}')
     for i in range(last_update.year, yesterday.year + 1):
         print(i)
-        if (i < yesterday.year):
+        if last_update > dt.date(i,9,28):
+            pass
+        elif (i < yesterday.year):
             dfGames = update_played_games(i, f'{i}-01-01', f'{i}-10-15')
             queries.insert_data(df=dfGames, table='game', replace_append='append')
 
@@ -66,7 +69,7 @@ def get_game_stats(game_data):
 
         stats_df.fillna(0.0, inplace=True)
         stats_df.columns = [x.lower() for x in stats_df.columns]
-        stats_df = stats_df[stats_df.batting_gamesplayed == 1]
+        stats_df = stats_df[(stats_df.batting_gamesplayed >= 1) | (stats_df.pitching_battersfaced >=1 )]
         df = df.append(stats_df, sort=False)
 
     dropCols = ['batting_stolenbasepercentage', 'batting_atbatsperhomerun', 'batting_note',
@@ -107,3 +110,6 @@ def update_game_stats():
         })
 
     return get_game_stats(gmdata)
+
+def game_previews():
+    pass

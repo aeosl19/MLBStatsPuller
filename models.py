@@ -86,8 +86,8 @@ class Game(Base):
     status_codedgamestate = Column(String)
     status_detailedstate = Column(String)
     boxscore = Column(String)
-    home_pitcher_id = Column(String)
-    away_pitcher_id = Column(String)
+    home_pitcher_id = Column(Integer)
+    away_pitcher_id = Column(Integer)
     # game_players = Column(ForeignKey='player.person_id')
     game_players_id = relationship("Gamestat",secondary=game_to_stats_association_table,back_populates="game_ids")
 
