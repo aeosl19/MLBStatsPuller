@@ -2,21 +2,22 @@ import queries
 import datetime as dt
 import pandas as pd
 import re
+from utils import clean_game_data
 from pandas.io.json import json_normalize
-from models import session, Gamestat, Game
+from models import session, Playerstat, Game
 from constants import yesterday, today
 from fetch import update_played_games, get_data
 
 
 def get_games():
-    startDate = dt.date(2018,1,1)
+    startDate = dt.date(2018, 1, 1)
     last_update = queries.check_last_update(Game)
     print(last_update)
     if last_update == None: last_update = dt.date(2018, 1, 1)
     print(f'Games last_update: {last_update}')
     for i in range(last_update.year, yesterday.year + 1):
         print(i)
-        if last_update > dt.date(i,9,28):
+        if last_update > dt.date(i, 9, 28):
             pass
         elif (i < yesterday.year):
             dfGames = update_played_games(i, f'{i}-01-01', f'{i}-10-15')
@@ -33,13 +34,25 @@ def get_games():
 
 
 def get_game_stats(game_data):
-    df = pd.DataFrame()
+    team_stats = []
+    player_stats = []
     for i in game_data:
         print(i['gamedate'])
         gm = get_data(i['boxscore'])
         gamepk = re.search(r'/game/([^/]+)', i['boxscore']).group(1)
-        player_stats = []
+
         for home_away in gm['teams']:
+            team_stats.append({
+                'gamepk': gamepk,
+                'gamedate': i['gamedate'],
+                'homegame': True if home_away == 'home' else False,
+                'team_name': gm['teams'][home_away]['team']['name'],
+                'team_id': gm['teams'][home_away]['team']['id'],
+                'batting': gm['teams'][home_away]['teamStats']['batting'],
+                'pitching': gm['teams'][home_away]['teamStats']['pitching'],
+                'fielding': gm['teams'][home_away]['teamStats']['fielding']
+            })
+
             for playerID in gm['teams'][home_away]['players']:
                 player_info = {
                     'gamepk': gamepk,
@@ -59,42 +72,18 @@ def get_game_stats(game_data):
                 }
                 player_stats.append(player_info)
 
-        stats_df = pd.DataFrame.from_dict(player_stats)
-        cols = ['batting', 'fielding', 'pitching']
+    df_team_stats = clean_game_data(pd.DataFrame.from_dict(team_stats))
+    df_player_stats = clean_game_data(pd.DataFrame.from_dict(player_stats), isPlayer=True)
 
-        for col in cols:
-            tmp = json_normalize(stats_df[col])
-            tmp.columns = [f"{col}_{subcolumn}" for subcolumn in tmp.columns]
-            stats_df = stats_df.drop(col, axis=1).merge(tmp, right_index=True, left_index=True)
+    queries.insert_data(df_team_stats, 'teamstat')
 
-        stats_df.fillna(0.0, inplace=True)
-        stats_df.columns = [x.lower() for x in stats_df.columns]
-        stats_df = stats_df[(stats_df.batting_gamesplayed >= 1) | (stats_df.pitching_battersfaced >=1 )]
-        df = df.append(stats_df, sort=False)
-
-    dropCols = ['batting_stolenbasepercentage', 'batting_atbatsperhomerun', 'batting_note',
-                'fielding_stolenbasepercentage', 'pitching_note', 'pitching_stolenbasepercentage',
-                'pitching_strikepercentage', 'pitching_runsscoredper9', 'pitching_homerunsper9']
-
-    for col in dropCols:
-        if col in df.columns:
-            df.drop(columns=col, inplace=True)
-        else:
-            print(f'Columns does not exist {col}')
-
-    # df.drop(columns=dropCols, inplace=True)
-    conv_cols = ['gamepk', 'position_code',
-                 'fielding_fielding', 'pitching_inningspitched']
-
-    for col in conv_cols:
-        df[col] = df[col].astype('float')
-
-    queries.insert_data(df, 'gamestat')
+    queries.insert_data(df_player_stats, 'playerstat')
 
     return True
 
+
 def update_game_stats():
-    last_update = queries.check_last_update(Gamestat)
+    last_update = queries.check_last_update(Playerstat)
     print(f'last update: {last_update}')
     if last_update == None:
         last_update = dt.date(2018, 1, 1)
@@ -110,6 +99,7 @@ def update_game_stats():
         })
 
     return get_game_stats(gmdata)
+
 
 def game_previews():
     pass

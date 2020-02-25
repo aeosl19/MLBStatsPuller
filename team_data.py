@@ -3,7 +3,7 @@ import constants
 import fetch
 import pandas as pd
 import utils
-from models import Team, session, Player
+from models import Team, session, Player, Teamstat
 import datetime as dt
 
 

@@ -2,9 +2,7 @@
 from models import session, Game
 from sqlalchemy import func
 import datetime as dt
-from models import Team, Player, session, Game, Gamestat
-
-
+from models import Team, Player, session, Game, Playerstat, Teamstat
 
 
 def insert_data(df, table, replace_append='append'):

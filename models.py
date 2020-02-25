@@ -57,7 +57,7 @@ class Player(Base):
 
 game_to_stats_association_table = Table('game_to_stats_association', Base.metadata,
     Column('game_id', Integer, ForeignKey('game.id')),
-    Column('gamestat_id', Integer, ForeignKey('gamestat.id'))
+    Column('playerstat_id', Integer, ForeignKey('playerstat.id'))
 )
 
 class Game(Base):
@@ -89,11 +89,11 @@ class Game(Base):
     home_pitcher_id = Column(Integer)
     away_pitcher_id = Column(Integer)
     # game_players = Column(ForeignKey='player.person_id')
-    game_players_id = relationship("Gamestat",secondary=game_to_stats_association_table,back_populates="game_ids")
+    game_players_id = relationship("Playerstat",secondary=game_to_stats_association_table,back_populates="game_ids")
 
 
-class Gamestat(Base):
-    __tablename__ = 'gamestat'
+class Playerstat(Base):
+    __tablename__ = 'playerstat'
     id = Column(Integer, primary_key=True)
     gamepk = Column(Integer)
     gamedate = Column(Date)
@@ -189,3 +189,100 @@ class Gamestat(Base):
     pitching_sacflies = Column(Float)
     pitching_flyouts = Column(Float)
     game_ids = relationship("Game", secondary=game_to_stats_association_table, back_populates="game_players_id")
+
+
+class Teamstat(Base):
+    __tablename__ = 'teamstat'
+    gamepk = Column(Integer)
+    gamedate = Column(Date)
+    homegame = Column(Boolean)
+    team_name = Column(String)
+    team_id = Column(Integer)
+
+    ### batting Start ######
+    id = Column(Integer, primary_key=True)
+    batting_flyouts = Column(Integer)
+    batting_groundouts = Column(Integer)
+    batting_runs = Column(Integer)
+    batting_doubles = Column(Integer)
+    batting_triples = Column(Integer)
+    batting_homeruns = Column(Integer)
+    batting_strikeouts = Column(Integer)
+    batting_baseonballs = Column(Integer)
+    batting_intentionalwalks = Column(Integer)
+    batting_hits = Column(Integer)
+    batting_hitbypitch = Column(Integer)
+    batting_avg = Column(Integer)
+    batting_atbats = Column(Integer)
+    batting_obp = Column(Float)
+    batting_slg = Column(Float)
+    batting_ops = Column(Float)
+    batting_caughtstealing = Column(Integer)
+    batting_stolenbases = Column(Integer)
+    batting_stolenbasepercentage = Column(Float)
+    batting_groundintodoubleplay = Column(Integer)
+    batting_groundintotripleplay = Column(Integer)
+    batting_plateappearances = Column(Integer)
+    batting_totalbases = Column(Integer)
+    batting_rbi = Column(Integer)
+    batting_leftOnbase = Column(Integer)
+    batting_sacbunts = Column(Integer)
+    batting_sacflies = Column(Integer)
+    batting_catchersinterference = Column(Integer)
+    batting_pickoffs = Column(Integer)
+    batting_atbatsperhomerun = Column(Float)
+    ### batting end ######
+
+    ### Pitching Start ######
+    pitching_groundouts = Column(Integer)
+    pitching_airouts = Column(Integer)
+    pitching_runs = Column(Integer)
+    pitching_doubles = Column(Integer)
+    pitching_triples = Column(Integer)
+    pitching_homeruns = Column(Integer)
+    pitching_strikeouts = Column(Integer)
+    pitching_baseonballs = Column(Integer)
+    pitching_intentionalwalks = Column(Integer)
+    pitching_hits = Column(Integer)
+    pitching_hitbypitch = Column(Integer)
+    pitching_atbats = Column(Integer)
+    pitching_obp = Column(Float)
+    pitching_caughtstealing = Column(Integer)
+    pitching_stolenbases = Column(Integer)
+    pitching_stolenbasepercentage = Column(Float)
+    pitching_era = Column(Float)
+    pitching_inningspitched = Column(Float)
+    pitching__saveopportunities = Column(Integer)
+    pitching_earnedruns = Column(Float)
+    pitching_whip = Column(Float)
+    pitching_battersfaced = Column(Integer)
+    pitching_outs = Column(Integer)
+    pitching_completegames = Column(Integer)
+    pitching_shutouts = Column(Integer)
+    pitching_hitbatsmen = Column(Integer)
+    pitching_balks = Column(Integer)
+    pitching_wildpitches = Column(Integer)
+    pitching_pickoffs = Column(Integer)
+    pitching_groundoutstoairouts = Column(Float)
+    pitching_rbi = Column(Integer)
+    pitching_runsscoredper9 = Column(Float)
+    pitching_homerunsper9 = Column(Float)
+    pitching_inheritedrunners = Column(Integer)
+    pitching_inheritedrunnersscored = Column(Integer)
+    pitching_catchersinterference = Column(Integer)
+    pitching_sacbunts = Column(Integer)
+    pitching_sacflies = Column(Integer)
+    ### Pitching End ######
+
+    ### Fielding Start ######
+    fielding_assists = Column(Integer)
+    fielding_putouts = Column(Integer)
+    fielding_errors = Column(Integer)
+    fielding_chances = Column(Integer)
+    fielding_caughtstealing = Column(Integer)
+    fielding_passedball = Column(Integer)
+    fielding_stolenbases = Column(Integer)
+    fielding_stolenbasepercentage = Column(Float)
+    fielding_pickoffs = Column(Integer)
+    ### Fielding End ######
+
